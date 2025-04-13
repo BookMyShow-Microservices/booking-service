@@ -1,5 +1,6 @@
 package com.project.microservices.bookingservice.showseats.repoistory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,16 +20,22 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeatsEntity, Integ
 
    List<ShowSeatsEntity> findByShowseatIdInAndShowseatShowId(List<Integer> seatIds, Integer showId);
    
-   
    @Modifying
    @Transactional
-   @Query("UPDATE ShowSeatsEntity s SET s.showseatStatus = :status"
-   		+ " WHERE s.showseatId IN :seatUniqueIds AND s.showseatShowId = :showId ")
-   void updateSeatStatus(@Param("seatUniqueIds") List<Integer> seatUniqueIds,@Param("status") Status status,@Param("showId") Integer showId);
-   
-   
+   @Query("UPDATE ShowSeatsEntity s SET s.showseatStatus = :status, s.showseatUpdatedon = :updatedOn "
+           + "WHERE s.showseatId IN :seatUniqueIds AND s.showseatShowId = :showId")
+   void updateSeatStatus(@Param("seatUniqueIds") List<Integer> seatUniqueIds, @Param("status") Status status,
+           @Param("showId") Integer showId, @Param("updatedOn") LocalDateTime updatedOn);
+
+   @Modifying
+   @Query(value = "UPDATE showseats SET showseat_status = ?1, showseat_updatedon = ?2 "
+           + "WHERE showseat_status = ?3 AND showseat_updatedon < ?4", nativeQuery = true)
+   void updateSeatStatusWithFilter(@Param("newStatus") String newStatus,@Param("presentTime") LocalDateTime presentTime,
+                                   @Param("oldStatus") String oldStatus,@Param("thresholdTime") LocalDateTime thresholdTime);
 
 
 
-  
+
+
+
 }
