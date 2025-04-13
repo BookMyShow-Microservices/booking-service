@@ -1,6 +1,7 @@
 package com.project.microservices.bookingservice.services;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.project.microservices.bookingservice.entity.BookingEntity;
@@ -30,6 +32,7 @@ import com.project.microservices.bookingservice.utils.Utility;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -111,7 +114,7 @@ public class BookingServiceImpl implements BookingService {
 	    if (status == null ) {
 	        throw new SeatsUnavailableException("Please provide valid Status");
 	    }
-		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId);	
+		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId,LocalDateTime.now());
 		return "Seat statuses updated successfully.";
 	}
 	
@@ -202,8 +205,19 @@ public class BookingServiceImpl implements BookingService {
 		
 	}
 
-	
-	
-	
+	@Override
+	@Scheduled(fixedRate = 600000) // 10minutes
+	@Transactional
+	public void runScheduleTask() {
+        log.info("Task started: {}", System.currentTimeMillis());
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tenMinutesAgo = now.minusMinutes(4);
+		log.info("now: {}", now);
+		log.info("10 minutes ago: {}", tenMinutesAgo);
+		showSeatRepository.updateSeatStatusWithFilter("0",now ,"2",tenMinutesAgo );
+        log.info("Task running every 10 min: {}", System.currentTimeMillis());
 	}
+
+
+}
 
