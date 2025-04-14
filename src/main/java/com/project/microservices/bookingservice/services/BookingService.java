@@ -8,7 +8,6 @@ import com.project.microservices.bookingservice.model.BookingDetails;
 import com.project.microservices.bookingservice.model.ShowDetails;
 
 public interface BookingService {
-	
 
 	public BookingSummaryResponse generateBookingSummary(BookingSummaryRequest bookingSummaryRequest);
 	
@@ -17,6 +16,4 @@ public interface BookingService {
 	public  String updateSeatStatus(List<Integer> seatUniqueId,Integer status,Integer showId);
 
 	public Integer createBooking(BookingDetails bookingTableRequest);
-
-	public void runTask();
 }
