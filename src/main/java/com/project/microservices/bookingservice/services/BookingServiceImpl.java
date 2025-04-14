@@ -114,7 +114,7 @@ public class BookingServiceImpl implements BookingService {
 	    if (status == null ) {
 	        throw new SeatsUnavailableException("Please provide valid Status");
 	    }
-		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId,LocalDateTime.now());
+		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId);
 		return "Seat statuses updated successfully.";
 	}
 	
@@ -208,13 +208,13 @@ public class BookingServiceImpl implements BookingService {
 	@Override
 	@Scheduled(fixedRate = 600000) // 10minutes
 	@Transactional
-	public void runScheduleTask() {
+	public void runTask() {
         log.info("Task started: {}", System.currentTimeMillis());
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime tenMinutesAgo = now.minusMinutes(4);
-		log.info("now: {}", now);
-		log.info("10 minutes ago: {}", tenMinutesAgo);
-		showSeatRepository.updateSeatStatusWithFilter("0",now ,"2",tenMinutesAgo );
+		LocalDateTime tenMinutesAgo = now.minusMinutes(10);
+//		log.info("now: {}", now);
+//		log.info("10 minutes ago: {}", tenMinutesAgo);
+		showSeatRepository.updateToStatusAvailable();
         log.info("Task running every 10 min: {}", System.currentTimeMillis());
 	}
 
