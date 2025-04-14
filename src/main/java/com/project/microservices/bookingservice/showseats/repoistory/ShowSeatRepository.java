@@ -22,16 +22,15 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeatsEntity, Integ
    
    @Modifying
    @Transactional
-   @Query("UPDATE ShowSeatsEntity s SET s.showseatStatus = :status, s.showseatUpdatedon = :updatedOn "
+   @Query("UPDATE ShowSeatsEntity s SET s.showseatStatus = :status, s.showseatUpdatedon = CURRENT_TIMESTAMP "
            + "WHERE s.showseatId IN :seatUniqueIds AND s.showseatShowId = :showId")
    void updateSeatStatus(@Param("seatUniqueIds") List<Integer> seatUniqueIds, @Param("status") Status status,
-           @Param("showId") Integer showId, @Param("updatedOn") LocalDateTime updatedOn);
+           @Param("showId") Integer showId);
 
    @Modifying
-   @Query(value = "UPDATE showseats SET showseat_status = ?1, showseat_updatedon = ?2 "
-           + "WHERE showseat_status = ?3 AND showseat_updatedon < ?4", nativeQuery = true)
-   void updateSeatStatusWithFilter(@Param("newStatus") String newStatus,@Param("presentTime") LocalDateTime presentTime,
-                                   @Param("oldStatus") String oldStatus,@Param("thresholdTime") LocalDateTime thresholdTime);
+   @Query(value = "UPDATE showseats SET showseat_status = '0', showseat_updatedon = NOW() "
+           + "WHERE showseat_status = '2' AND showseat_updatedon < NOW() - INTERVAL '10 minutes'", nativeQuery = true)
+   void updateToStatusAvailable();
 
 
 
