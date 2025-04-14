@@ -18,5 +18,5 @@ public interface BookingService {
 
 	public Integer createBooking(BookingDetails bookingTableRequest);
 
-	public void runScheduleTask();
+	public void runTask();
 }
