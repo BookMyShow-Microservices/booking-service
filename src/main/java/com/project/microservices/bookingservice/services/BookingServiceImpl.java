@@ -1,7 +1,6 @@
 package com.project.microservices.bookingservice.services;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
 		 
 		 Long countSeats = countSeatStatus(showSeatIds,showId, bookingSummaryRequest.getCurrentSeatStatus());
 		 log.info("Total seats for given showId {}: {}", showId, countSeats);
-		 log.info("checking isUpdaterequired: {} ",bookingSummaryRequest.getIsUpdateRequired() );
+		 log.info("checking isUpdate required: {} ",bookingSummaryRequest.getIsUpdateRequired() );
 		
 		 if(countSeats == showSeatIds.size()) {
 			 BookingSummaryResponse bookingSummaryResponse = new BookingSummaryResponse();
@@ -131,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
 	    // Ensure that only available seats are counted
 	    List<ShowSeatsEntity> showSeatsEntityList = showSeatRepository.findByShowseatIdInAndShowseatShowId(seatUniqueIds,showId);
 	    Long size = showSeatsEntityList.stream().filter(entity -> entity.getShowseatStatus() == status).count();
-	    log.info(status.getStringValue()+" seats count: {} for showId: {}", size, showId);
+        log.info("{} seats count: {} for showId: {}", status.getStringValue(), size, showId);
         return size;
 	}
 	
@@ -205,17 +204,11 @@ public class BookingServiceImpl implements BookingService {
 		
 	}
 
-	@Override
 	@Scheduled(fixedRate = 600000) // 10minutes
 	@Transactional
-	public void runTask() {
+	public void updateToStatusAvailable() {
         log.info("Task started: {}", System.currentTimeMillis());
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime tenMinutesAgo = now.minusMinutes(10);
-//		log.info("now: {}", now);
-//		log.info("10 minutes ago: {}", tenMinutesAgo);
 		showSeatRepository.updateToStatusAvailable();
-        log.info("Task running every 10 min: {}", System.currentTimeMillis());
 	}
 
 
