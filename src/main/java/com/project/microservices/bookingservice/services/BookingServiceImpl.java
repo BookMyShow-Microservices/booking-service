@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.project.microservices.bookingservice.entity.BookingEntity;
@@ -30,6 +31,7 @@ import com.project.microservices.bookingservice.utils.Utility;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -82,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
 		 
 		 Long countSeats = countSeatStatus(showSeatIds,showId, bookingSummaryRequest.getCurrentSeatStatus());
 		 log.info("Total seats for given showId {}: {}", showId, countSeats);
-		 log.info("checking isUpdaterequired: {} ",bookingSummaryRequest.getIsUpdateRequired() );
+		 log.info("checking isUpdate required: {} ",bookingSummaryRequest.getIsUpdateRequired() );
 		
 		 if(countSeats == showSeatIds.size()) {
 			 BookingSummaryResponse bookingSummaryResponse = new BookingSummaryResponse();
@@ -111,7 +113,7 @@ public class BookingServiceImpl implements BookingService {
 	    if (status == null ) {
 	        throw new SeatsUnavailableException("Please provide valid Status");
 	    }
-		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId);	
+		showSeatRepository.updateSeatStatus(seatUniqueId,Status.fromIntValue(status),showId);
 		return "Seat statuses updated successfully.";
 	}
 	
@@ -128,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
 	    // Ensure that only available seats are counted
 	    List<ShowSeatsEntity> showSeatsEntityList = showSeatRepository.findByShowseatIdInAndShowseatShowId(seatUniqueIds,showId);
 	    Long size = showSeatsEntityList.stream().filter(entity -> entity.getShowseatStatus() == status).count();
-	    log.info(status.getStringValue()+" seats count: {} for showId: {}", size, showId);
+        log.info("{} seats count: {} for showId: {}", status.getStringValue(), size, showId);
         return size;
 	}
 	
@@ -202,8 +204,13 @@ public class BookingServiceImpl implements BookingService {
 		
 	}
 
-	
-	
-	
+	@Scheduled(fixedRate = 600000) // 10minutes
+	@Transactional
+	public void updateToStatusAvailable() {
+        log.info("Task started: {}", System.currentTimeMillis());
+		showSeatRepository.updateToStatusAvailable();
 	}
+
+
+}
 
