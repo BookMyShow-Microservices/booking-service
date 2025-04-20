@@ -6,28 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.bookmyshow.common.library.entity.BookingEntity;
+import com.bookmyshow.common.library.repository.BookingRepository;
+import com.bookmyshow.common.library.repository.ShowSeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import com.project.microservices.bookingservice.entity.BookingEntity;
-import com.project.microservices.bookingservice.exception.InvalidRequestBodyException;
-import com.project.microservices.bookingservice.exception.InvalidSeatIdException;
-import com.project.microservices.bookingservice.exception.InvalidShowIdException;
-import com.project.microservices.bookingservice.exception.SeatsUnavailableException;
-import com.project.microservices.bookingservice.exception.ShowDetailsFetchException;
-import com.project.microservices.bookingservice.model.BookingDetails;
-import com.project.microservices.bookingservice.model.BookingSummaryRequest;
-import com.project.microservices.bookingservice.model.BookingSummaryResponse;
-import com.project.microservices.bookingservice.model.SeatPricingDetails;
-import com.project.microservices.bookingservice.model.ShowDetails;
-import com.project.microservices.bookingservice.model.Status;
-import com.project.microservices.bookingservice.proxy.SearchServiceProxy;
-import com.project.microservices.bookingservice.repository.BookingRepository;
-import com.project.microservices.bookingservice.showseats.entity.ShowSeatsEntity;
-import com.project.microservices.bookingservice.showseats.repoistory.ShowSeatRepository;
-import com.project.microservices.bookingservice.utils.Utility;
+import com.bookmyshow.common.library.exception.*;
+import com.bookmyshow.common.library.model.*;
+import com.bookmyshow.common.library.proxy.SearchServiceProxy;
+import com.bookmyshow.common.library.entity.ShowSeatsEntity;
+import com.bookmyshow.common.library.utils.Utility;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;

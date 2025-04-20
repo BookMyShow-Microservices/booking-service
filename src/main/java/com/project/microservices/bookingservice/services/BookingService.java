@@ -2,10 +2,7 @@ package com.project.microservices.bookingservice.services;
 
 import java.util.List;
 
-import com.project.microservices.bookingservice.model.BookingSummaryRequest;
-import com.project.microservices.bookingservice.model.BookingSummaryResponse;
-import com.project.microservices.bookingservice.model.BookingDetails;
-import com.project.microservices.bookingservice.model.ShowDetails;
+import com.bookmyshow.common.library.model.*;
 
 public interface BookingService {
 
